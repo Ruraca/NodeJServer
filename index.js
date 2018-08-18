@@ -9,34 +9,35 @@ var https = require('https');
 var tls = require('tls');
 
 var options = {
-    key  : fs.readFileSync('server.key'),
-    cert : fs.readFileSync('server.crt')
+    key: fs.readFileSync('server.key'),
+    cert: fs.readFileSync('server.crt')
 };
 // set up express app
 const app = express();
 
-app.use(function(req, res, next) {
-	res.setHeader('Access-Control-Allow-Origin', '*');
+app.use(function (req, res, next) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
 
-    	// Request methods you wish to allow
-    	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    // Request methods you wish to allow
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
 
-    	// Request headers you wish to allow
-    	res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-	next();
- 
+    // Request headers you wish to allow
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type,authorization');
+    next();
+
 });
-app.use(express.bodyParser({limit: '50mb'}));
-app.use(bodyParser.json());
+//app.use(bodyParser({limit: '50mb'}));
+app.use(bodyParser.json({limit: '50mb', type: 'application/json'}));
 app.use(bodyParser.urlencoded({
-    extended: false
+    extended: false,
+    limit: '50mb'
 }));
 app.use(methodOverride());
 
 
 // connect to mongodb
-mongoose.connect('mongodb://localhost/ninjago',function(err, res) {
-    if(err) throw err;
+mongoose.connect('mongodb://localhost/ninjago', function (err, res) {
+    if (err) throw err;
     console.log('Connected to Database');
 });
 mongoose.Promise = global.Promise;
@@ -60,7 +61,7 @@ app.use('/api', require('./routes/api'));
 
 
 // listen for requests
-app.listen(process.env.port || 3000, function(){
+app.listen(process.env.port|| 3000, function () {
     console.log('now listening for requests without SSL');
 });
 /*var httpsServer = https.createServer(options, app);
