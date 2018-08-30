@@ -34,14 +34,14 @@ router.put('/:name', middleware.ensureAuthenticated, function (req, res) {
                 res.json({succes: false});
             } else {
                 actualizacion = new Date();
-                console.log("PUT Objetivo " + actualizacion);
+                console.log("PUT  "+req.params.name+"  " + actualizacion);
                 res.json({succes: true});
 
                 alarma = false;
             }
         });
 });
-router.put('/circles/:name', function (req, res) {
+router.put('/circles/:name',middleware.ensureAuthenticated, function (req, res) {
     User.update(
         {name: req.params.name}, // query
         {$set: {circles: [req.body.circles]}},
@@ -51,6 +51,21 @@ router.put('/circles/:name', function (req, res) {
                 res.json({succes: false});
             } else {
                 console.log("Circles " + req.params.name);
+                res.json({succes: true});
+            }
+        });
+});
+router.put('/warningDistance/:name', middleware.ensureAuthenticated,function (req, res) {
+    User.update(
+        {name: req.params.name}, // query
+        {$set: {warningDistance: req.body.warningDistance}},
+        function (err, object) {
+            if (err) {
+                console.log(req.body.warningDistance);
+                console.warn(err.message);  // returns error if no matching object found
+                res.json({succes: false});
+            } else {
+                console.log("warningDistance " + req.params.name + " "+ req.body.warningDistance);
                 res.json({succes: true});
             }
         });
@@ -65,7 +80,7 @@ router.get('/circles/:name',middleware.ensureAuthenticated, function (req, res) 
     });
 });
 
-router.get('/users', function (req, res) {
+router.get('/users',middleware.ensureAuthenticated, function (req, res) {
     User.find({}, function (err, users) {
         res.json(users);
     });
@@ -76,6 +91,15 @@ router.get('/users/:name', middleware.ensureAuthenticated, function (req, res) {
         if (err) throw err;
         if (user) {
             res.json(user.geometry.coordinates);
+        }
+    });
+});
+
+router.get('/warningDistance/:name', middleware.ensureAuthenticated, function (req, res) {
+    User.findOne({name: req.params.name}, function (err, user) {
+        if (err) throw err;
+        if (user) {
+            res.json(user.warningDistance);
         }
     });
 });
@@ -175,7 +199,7 @@ router.post('/setup', function (req, res) {
     // create a sample user
 
 });
-router.get('/alarma', middleware.ensureAuthenticated, function (req, res) {
+router.get('/alarma', function (req, res) {
     if (alarma) {
         var obj = {'alarma': 'true'};
         res.json(obj);
@@ -184,6 +208,18 @@ router.get('/alarma', middleware.ensureAuthenticated, function (req, res) {
         res.json(obj);
 
     }
+});
+
+router.put('/alarma/:boolean', function (req, res) {
+    if (req.params.boolean === "true") {
+       alarma=true;
+       res.json({success:true});
+    } else {
+       alarma=false;
+        res.json({success:true});
+
+    }
+    res.json({success:false});
 });
 // get a list of ninjas from the db
 router.post('/distancia', middleware.ensureAuthenticated, function (req, res, next) {

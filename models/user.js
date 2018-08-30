@@ -23,7 +23,11 @@ const UserSchema = new Schema({
         required: [true, 'Name field is required']
     },
     geometry: GeoSchema,
-    circles: Object
+    circles: Object,
+    warningDistance: {
+        type: Number,
+        default: 5000
+    }
 });
 
 
