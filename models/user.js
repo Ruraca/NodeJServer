@@ -27,7 +27,16 @@ const UserSchema = new Schema({
     warningDistance: {
         type: Number,
         default: 5000
+    },
+    bandLevelBattery: {
+        type: Number,
+        default: -1
+    },
+    phoneLevelBattery: {
+        type: Number,
+        default: -1
     }
+
 });
 
 
