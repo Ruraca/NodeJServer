@@ -8,8 +8,8 @@ exports.ensureAuthenticated = function(req, res, next) {
             .status(403)
             .send({message: "Error en la autorización"});
     }
-
     var token = req.headers.authorization.split(" ")[1];
+
     var payload = jwt.decode(token, config.TOKEN_SECRET);
 
     if(payload.exp <= moment().unix()) {
